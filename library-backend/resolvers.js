@@ -35,13 +35,7 @@ const resolvers = {
     },
     Author: {
         bookCount: async (root) => {
-            const id = root._id
-            const books = await Book.find({})
-            var count = 0
-            for(var book of books){
-                if(book.author.toString() === id.toString()) count = count + 1
-            }
-            return count
+            return root.books.length
         }
     },
     Mutation: {
@@ -70,6 +64,7 @@ const resolvers = {
                 }
             }
             const book = new Book({ ...args, author: author})
+            
             try { 
                 await book.save()
             } catch(error) {
@@ -81,6 +76,9 @@ const resolvers = {
                     }
                 })
             }
+
+            await Author.findOneAndUpdate({ name: author.name }, { books: author.books.concat(book._id) })
+
         
             pubsub.publish('BOOK_ADDED', { bookAdded: book })
 
