@@ -17,7 +17,6 @@ export const updateCache = (cache, query, bookAdded) => {
   }
 
   cache.updateQuery(query, ({ booksByGenre }) => {
-    
     return {
       booksByGenre: uniqueByTitle(booksByGenre.concat(bookAdded))
     }
@@ -45,8 +44,7 @@ const App = () => {
   useSubscription(BOOK_ADDED, {
     onData: ({ data, client }) => {
       const bookAdded = data.data.bookAdded
-      console.log(bookAdded)
-      console.log(client.cache)
+     
       alert(`Book '${bookAdded.title}' added!`)
       updateCache(client.cache, { query: BOOKS_BY_GENRE, variables: {
         genre: null
